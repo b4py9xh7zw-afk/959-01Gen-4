@@ -1,14 +1,15 @@
 import { Request, Response } from 'express';
 import traceService from '../services/TraceService.js';
 import auditLogService from '../services/AuditLogService.js';
+import { cleanQueryParam } from '../utils/queryHelper.js';
 
 export const listCollectedData = (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 20;
-    const gatewayId = req.query.gatewayId as string;
-    const startTime = req.query.startTime as string;
-    const endTime = req.query.endTime as string;
+    const gatewayId = cleanQueryParam(req.query.gatewayId);
+    const startTime = cleanQueryParam(req.query.startTime);
+    const endTime = cleanQueryParam(req.query.endTime);
 
     const result = traceService.listCollectedData({
       page,
@@ -28,8 +29,8 @@ export const listAuditLogs = (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 20;
-    const targetType = req.query.targetType as string;
-    const action = req.query.action as string;
+    const targetType = cleanQueryParam(req.query.targetType);
+    const action = cleanQueryParam(req.query.action);
 
     const result = auditLogService.list({
       page,

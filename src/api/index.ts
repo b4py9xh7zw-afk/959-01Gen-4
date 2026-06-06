@@ -8,6 +8,14 @@ import type {
   CreateFactoryRequest, CreateProductionLineRequest,
 } from '../../shared/types.js';
 
+function buildQueryString(params: Record<string, any>): string {
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+  );
+  const query = new URLSearchParams(cleanParams).toString();
+  return query ? `?${query}` : '';
+}
+
 export const dashboardApi = {
   getStats: () => api.get<DashboardStats>('/dashboard/stats'),
   getExpiring: () => api.get<ExpiringCertificate[]>('/dashboard/expiring'),
@@ -16,8 +24,8 @@ export const dashboardApi = {
 
 export const certificateApi = {
   list: (params: { page?: number; pageSize?: number; status?: string; factoryId?: string; productionLineId?: string } = {}) => {
-    const query = new URLSearchParams(params as any).toString();
-    return api.get<PaginationResponse<Certificate>>(`/certificates${query ? `?${query}` : ''}`);
+    const query = buildQueryString(params);
+    return api.get<PaginationResponse<Certificate>>(`/certificates${query}`);
   },
   get: (id: string) => api.get<Certificate>(`/certificates/${id}`),
   create: (data: CreateCertificateRequest) => api.post<Certificate>('/certificates', data),
@@ -26,8 +34,8 @@ export const certificateApi = {
 
 export const gatewayApi = {
   list: (params: { page?: number; pageSize?: number; factoryId?: string; status?: string } = {}) => {
-    const query = new URLSearchParams(params as any).toString();
-    return api.get<PaginationResponse<Gateway>>(`/gateways${query ? `?${query}` : ''}`);
+    const query = buildQueryString(params);
+    return api.get<PaginationResponse<Gateway>>(`/gateways${query}`);
   },
   listAll: () => api.get<Gateway[]>('/gateways/all'),
   listWithoutCertificate: () => api.get<Gateway[]>('/gateways/without-certificate'),
@@ -47,12 +55,12 @@ export const factoryApi = {
 
 export const traceApi = {
   listData: (params: { page?: number; pageSize?: number; gatewayId?: string; startTime?: string; endTime?: string } = {}) => {
-    const query = new URLSearchParams(params as any).toString();
-    return api.get<PaginationResponse<CollectedData>>(`/trace/data${query ? `?${query}` : ''}`);
+    const query = buildQueryString(params);
+    return api.get<PaginationResponse<CollectedData>>(`/trace/data${query}`);
   },
   listAuditLogs: (params: { page?: number; pageSize?: number; targetType?: string; action?: string } = {}) => {
-    const query = new URLSearchParams(params as any).toString();
-    return api.get<PaginationResponse<AuditLog>>(`/trace/audit${query ? `?${query}` : ''}`);
+    const query = buildQueryString(params);
+    return api.get<PaginationResponse<AuditLog>>(`/trace/audit${query}`);
   },
 };
 

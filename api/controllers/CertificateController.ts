@@ -1,14 +1,15 @@
 import { Request, Response } from 'express';
 import certificateService from '../services/CertificateService.js';
 import type { CreateCertificateRequest, RevokeCertificateRequest } from '../../shared/types.js';
+import { cleanQueryParam } from '../utils/queryHelper.js';
 
 export const listCertificates = (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
-    const status = req.query.status as string;
-    const factoryId = req.query.factoryId as string;
-    const productionLineId = req.query.productionLineId as string;
+    const status = cleanQueryParam(req.query.status);
+    const factoryId = cleanQueryParam(req.query.factoryId);
+    const productionLineId = cleanQueryParam(req.query.productionLineId);
 
     const result = certificateService.list({
       page,

@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import gatewayService from '../services/GatewayService.js';
 import type { CreateGatewayRequest } from '../../shared/types.js';
+import { cleanQueryParam } from '../utils/queryHelper.js';
 
 export const listGateways = (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
-    const factoryId = req.query.factoryId as string;
-    const status = req.query.status as string;
+    const factoryId = cleanQueryParam(req.query.factoryId);
+    const status = cleanQueryParam(req.query.status);
 
     const result = gatewayService.list({
       page,
